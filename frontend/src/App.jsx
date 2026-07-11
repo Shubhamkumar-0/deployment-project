@@ -7,8 +7,7 @@ function App() {
 
   const getMessage = async () => {
     try {
-      const res = await axios.get("https://deployment-project-vxly.onrender.com/");
-      setMessage(res.data);
+      const res = await axios.get("https://deployment-project-yxly.onrender.com")
     } catch (error) {
       console.log(error);
     }
