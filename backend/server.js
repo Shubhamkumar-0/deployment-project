@@ -37,6 +37,13 @@ app.get("/", (req, res) => {
   res.send("Backend is Running 🚀");
 });
 
+app.get("/api/test", (req, res) => {
+  res.json({
+    success: true,
+    message: "Backend Connected Successfully",
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
