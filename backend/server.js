@@ -63,11 +63,15 @@ connectDB();
 const app = express();
 
 // 👇 Replace app.use(cors()) with this
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-  })
-);
+
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://deployment-project-seven.vercel.app"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 app.use(express.json());
 
