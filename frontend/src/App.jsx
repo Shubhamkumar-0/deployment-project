@@ -24,7 +24,7 @@ function App() {
       </button>
 
       <h2>{message}</h2> */}
-      <Register />;
+      <Register />
     </div>
   );
 }

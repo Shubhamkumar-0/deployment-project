@@ -28,10 +28,10 @@ function Register() {
     try {
 
       // POST Request
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/register",
+      await axios.post(
+        "https://deployment-project-yxly.onrender.com/api/auth/register",
         formData
-      );
+        );
 
       console.log(res.data);
 
