@@ -54,17 +54,19 @@ const express = require("express");
 const cors = require("cors");
 const dns = require("dns");
 const dotenv = require("dotenv");
+const authRoutes = require("./routes/authRoutes");
+// Authentication Routes
+
 
 dotenv.config();
-
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
-
 const connectDB = require("./config/database");
 
 connectDB();
 
 const app = express();
-
+app.use("/api/auth", authRoutes);
+app.use(express.json());
 // 👇 Replace app.use(cors()) with this
 
 app.use(cors({
