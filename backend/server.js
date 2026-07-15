@@ -66,11 +66,6 @@ connectDB();
 
 const app = express();
 
-app.use(express.json());
-app.use("/api/auth", authRoutes);
-
-// 👇 Replace app.use(cors()) with this
-
 app.use(cors({
   origin: [
     "http://localhost:5173",
@@ -81,6 +76,8 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend is Running 🚀");
