@@ -28,14 +28,13 @@ function Register() {
     try {
 
       // POST Request
-      await axios.post(
+      const res = await axios.post(
         "https://deployment-project-yxly.onrender.com/api/auth/register",
         formData
-        );
+);
 
-      console.log(res.data);
-
-      alert(res.data.message);
+        console.log(res.data);
+        alert(res.data.message);
 
     } catch (error) {
       console.log(error.response.data);
