@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import Register from "./pages/Register";
 // import "./App.css";
 
 function App() {
@@ -18,11 +19,12 @@ function App() {
     <div>
       <h1>Deployment Project</h1>
 
-      <button onClick={getMessage}>
+      {/* <button onClick={getMessage}>
         Connect Backend
       </button>
 
-      <h2>{message}</h2>
+      <h2>{message}</h2> */}
+      <Register />;
     </div>
   );
 }
