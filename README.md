@@ -1,3 +1,24 @@
+Final Deployment Roadmap
+MongoDB Atlas          ✅
+Render                 ✅
+Vercel                 ✅
+React Router           ✅
+Authentication         🔄
+JWT                    ⏳
+bcrypt                 ⏳
+Protected Routes       ⏳
+Logout                 ⏳
+Environment Variables  ⏳
+Custom Domain          ⏳
+HTTPS                  ⏳
+PM2                    ⏳
+Docker                 ⏳
+CI/CD                  ⏳
+AWS Basics             ⏳
+
+
+
+
 # MongoDB Atlas
 
 ## Why MongoDB Atlas?
