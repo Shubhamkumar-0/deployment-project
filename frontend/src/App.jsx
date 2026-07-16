@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 import { Routes, Route } from "react-router-dom";
 // import "./App.css";
 
@@ -32,9 +33,10 @@ function App() {
       <Login />
 
       <Routes>
+         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </div>
   );
