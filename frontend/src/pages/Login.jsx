@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Login() {
-
+  const navigate = useNavigate();
   // Form State
   const [formData, setFormData] = useState({
     email: "",
@@ -36,6 +36,7 @@ function Login() {
       console.log(res.data);
 
       alert(res.data.message);
+      navigate("/dashboard");
 
     } catch (error) {
 
