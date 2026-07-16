@@ -6,16 +6,16 @@ import { Routes, Route } from "react-router-dom";
 // import "./App.css";
 
 function App() {
-  const [message, setMessage] = useState("");
+  // const [message, setMessage] = useState("");
 
-  const getMessage = async () => {
-    try {
-      const res = await axios.get("https://deployment-project-yxly.onrender.com");
-      setMessage(res.data);
-    } catch (error) {
-      console.log(error);
-    } 
-  };
+  // const getMessage = async () => {
+  //   try {
+  //     const res = await axios.get("https://deployment-project-yxly.onrender.com");
+  //     setMessage(res.data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   } 
+  // };
 
   return (
     <div>
