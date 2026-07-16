@@ -1,336 +1,194 @@
-# deployment-project
-# CORS (Cross-Origin Resource Sharing)
+# MongoDB Atlas
 
-## Introduction
+## Why MongoDB Atlas?
 
-During the deployment of this project, one of the biggest issues encountered was the **CORS (Cross-Origin Resource Sharing)** error.
-The application worked perfectly on localhost, but after deploying the frontend on **Vercel** and the backend on **Render**, every API request started failing.
-The browser console displayed the following error:
+Initially I had two options.
 
-```text
-Access to XMLHttpRequest at
-'https://deployment-project-yxly.onrender.com/api/auth/register'
-from origin
-'https://deployment-project-seven.vercel.app'
-has been blocked by CORS policy:
+1. Install MongoDB locally.
+2. Use MongoDB Atlas.
 
-No 'Access-Control-Allow-Origin' header is present on the requested resource.
-```
+I selected MongoDB Atlas because:
 
-At first glance, this error looks like a backend or Axios issue, but it is actually a browser security feature.
+• No need to install MongoDB locally.
+• Database remains online.
+• Can be connected directly with Render.
+• Easy deployment.
+• Free cluster is sufficient for learning projects.
 
----
+--------------------------------------------------------
 
-# What is CORS?
+## Creating MongoDB Atlas Account
 
-CORS stands for **Cross-Origin Resource Sharing**.
+1. Created account using Google.
+2. Created a free cluster.
+3. Selected M0 Free Tier.
+4. Region selected ...
+5. Cluster Name ...
+6. Waited until cluster became active.
 
-It is a security mechanism implemented by modern browsers to prevent malicious websites from making requests to servers that do not trust them.
+--------------------------------------------------------
 
-A browser considers two URLs different origins if **any one** of these changes:
+## Creating Database User
 
-- Protocol (http / https)
-- Domain
-- Port
+Database cannot be accessed without authentication.
 
-Example
+Created
 
-Local Development
+Username
 
-Frontend
+deployment_user
 
-```
-http://localhost:5173
-```
+Password
 
-Backend
+********
 
-```
-http://localhost:5000
-```
+Role
 
-Even though both are running on your own computer, the browser still considers them different origins because the ports are different.
+Atlas Admin
 
-After deployment:
+--------------------------------------------------------
 
-Frontend
+## Network Access
 
-```
-https://deployment-project-seven.vercel.app
-```
+Initially Atlas blocks every IP.
 
-Backend
+Therefore
 
-```
-https://deployment-project-yxly.onrender.com
-```
+Network Access
 
-Now the domains themselves are completely different.
+↓
 
-Therefore, the browser blocks every request unless the backend explicitly says:
+Add IP Address
 
-> "I trust this frontend."
+↓
 
----
+0.0.0.0/0
 
-# Why did this error happen in our project?
+Meaning
 
-Initially, the backend contained:
+Allow connection from every IP.
 
-```js
-app.use(cors());
-```
+Why?
 
-or sometimes CORS was configured incorrectly.
+Because Render servers have dynamic IP addresses.
 
-This allows development in many cases, but once the application was deployed, the backend did not explicitly trust our Vercel frontend.
+If only localhost IP is allowed,
 
-Therefore, whenever React tried to call:
+Render cannot connect.
 
-```js
-axios.post(
-"https://deployment-project-yxly.onrender.com/api/auth/register",
-formData
-)
-```
+--------------------------------------------------------
 
-the request never even reached our controller.
+## Connection String
 
-The browser stopped it before Express received it.
+Atlas provided
 
-This is important.
+mongodb+srv://deployment_user:password@digitallearning.7fm99lp.mongodb.net/?retryWrites=true&w=majority
 
-The error was **not** inside:
+Explanation
 
-- Register Controller
-- Login Controller
-- MongoDB
-- Axios
+mongodb+srv
 
-The request was blocked by the browser before Express executed our route.
+↓
 
----
+Uses DNS SRV Record.
 
-# Request Flow Without CORS
+deployment_user
 
-```
-React (Vercel)
-        │
-        │ axios.post(...)
-        ▼
-Browser
-        │
-        │ Checks Origin
-        ▼
-Origin Not Allowed ❌
-        │
-        ▼
-Request Blocked
+↓
 
-Express Server never receives the request.
-```
+Database Username.
 
----
+password
 
-# How did we fix it?
+↓
 
-Inside:
+Database Password.
 
-```
-backend/server.js
-```
+digitallearning
 
-we replaced the generic configuration with:
+↓
 
-```js
-app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "https://deployment-project-seven.vercel.app"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-}));
-```
+Cluster Name.
 
----
+mongodb.net
 
-# Explanation of every line
+↓
 
-### origin
+MongoDB Atlas Domain.
 
-```js
-origin: [
-    "http://localhost:5173",
-    "https://deployment-project-seven.vercel.app"
-]
-```
+--------------------------------------------------------
 
-This tells Express:
+## Why deploymentProject was added?
 
-> Only these frontend applications are allowed to call my backend.
+Initially
 
-The first URL is used while developing locally.
+mongodb.net/?retryWrites=true
 
-The second URL is used after deployment.
+No database name.
 
-If another website tries to call our backend, the browser will block the request.
+MongoDB automatically used
 
----
+test
 
-### methods
+database.
 
-```js
-methods: [
-"GET",
-"POST",
-"PUT",
-"DELETE"
-]
-```
+Therefore all users were saved inside
 
-These are the HTTP methods our frontend is allowed to use.
+test.users
 
-Our current project mainly uses:
+Instead of
 
-- GET
-- POST
+deploymentProject.users
 
-The others were added for future CRUD operations.
+Solution
 
----
+Changed URI
 
-### credentials
+mongodb.net/deploymentProject?retryWrites=true...
 
-```js
-credentials: true
-```
+Now Mongoose knows
 
-Currently our project does not use cookies.
+Database Name
 
-However, when JWT Authentication with cookies is implemented, this option becomes necessary.
+↓
 
-Adding it now makes future integration easier.
+deploymentProject
 
----
+Collection
 
-# Why did localhost work?
+↓
 
-During development:
+users
 
-Frontend
+--------------------------------------------------------
 
-```
-http://localhost:5173
-```
+## Important Learning
 
-Backend
+If database name is omitted,
 
-```
-http://localhost:5000
-```
+MongoDB automatically creates
 
-Both applications were running on our own machine.
+test
 
-Once we explicitly added localhost inside CORS, the browser allowed communication.
+database.
 
----
+This was one of the biggest mistakes during deployment.
 
-# Why did deployment fail?
 
-Because after deployment the frontend URL changed.
+Production Request Flow
 
-Earlier
-
-```
-http://localhost:5173
-```
-
-After deployment
-
-```
-https://deployment-project-seven.vercel.app
-```
-
-The backend still trusted localhost.
-
-It did **not** trust Vercel.
-
-Therefore the browser blocked every request.
-
----
-
-# Final Working Architecture
-
-```
 User
-   │
-   ▼
-Frontend (Vercel)
+   ↓
 https://deployment-project-seven.vercel.app
-   │
-   │ axios POST
-   ▼
-Backend (Render)
+   ↓
+Axios Request
+   ↓
 https://deployment-project-yxly.onrender.com
-   │
-   │ CORS verifies Origin
-   ▼
-Express Route
-   │
-   ▼
-Controller
-   │
-   ▼
+   ↓
+Express
+   ↓
 MongoDB Atlas
-```
-
----
-
-# Important Learning
-
-CORS is **not** a React problem.
-
-CORS is **not** an Axios problem.
-
-CORS is **not** a MongoDB problem.
-
-CORS is a browser security feature.
-
-The backend must explicitly allow trusted frontend domains.
-
-Without this configuration, the browser blocks the request before it even reaches Express.
-
----
-
-# Files involved
-
-```
-backend/server.js
-```
-
-Responsible for configuring CORS.
-
-```
-frontend/src/pages/Register.jsx
-```
-
-Sends Register API request.
-
-```
-frontend/src/pages/Login.jsx
-```
-
-Sends Login API request.
-
-These files depend on the backend accepting requests from the frontend.
-
----
-
-# Conclusion
-
-The CORS issue taught us one of the most important concepts in web development:
-
-Frontend and backend can communicate only if the backend explicitly trusts the frontend origin.
-
-This trust is established using the `cors` middleware inside the Express server.
+   ↓
+Response
+   ↓
+React UI Updated
