@@ -1,5 +1,7 @@
 // Import User Model
 const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+
 
 // Register Controller
 const register = async (req, res) => {
@@ -10,18 +12,23 @@ const register = async (req, res) => {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
 
+    
+
     if (existingUser) {
       return res.status(400).json({
         success: false,
         message: "User already exists",
       });
     }
+    // Hash Password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
 
     // Create new user
     const newUser = new User({
       name,
       email,
-      password,
+      password: hashedPassword,
     });
 
     // Save user in MongoDB
@@ -66,7 +73,8 @@ const login = async (req, res) => {
     }
 
     // Check password
-    if (user.password !== password) {
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (isMatch === false) {
       return res.status(400).json({
         success: false,
         message: "Invalid Password",
